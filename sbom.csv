@@ -1,4 +1,4 @@
-Name,Version,Type,Path
-apache-libcloud,3.3.1,pip,/Users/ahmedabdulahiahmed/Documents/IN3110/IN3110-ahmeaah/assignment2/requirements.txt
-mender-gui,1.0.0,npm,/Users/ahmedabdulahiahmed/Documents/IN3110/IN3110-ahmeaah/assignment3/package-lock.json
-mender-gui,1.0.0,npm,/Users/ahmedabdulahiahmed/Documents/IN3110/IN3110-ahmeaah/assignment4/package.json
+Name,Version,Type,Path,Git commit
+apache-libcloud,3.3.1,pip,/Users/ahmedabdulahiahmed/Documents/IN3110/IN3110-ahmeaah/assignment2/requirements.txt,3a9ed09776e1910d5a2b2ffe2f61c3cbd46ac29a
+mender-gui,1.0.0,npm,/Users/ahmedabdulahiahmed/Documents/IN3110/IN3110-ahmeaah/assignment3/package-lock.json,3a9ed09776e1910d5a2b2ffe2f61c3cbd46ac29a
+mender-gui,1.0.0,npm,/Users/ahmedabdulahiahmed/Documents/IN3110/IN3110-ahmeaah/assignment4/package.json,3a9ed09776e1910d5a2b2ffe2f61c3cbd46ac29a
