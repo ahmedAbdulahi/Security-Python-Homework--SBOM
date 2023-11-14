@@ -4,20 +4,23 @@
     "Version": "3.3.1",
     "Type": "pip",
     "Path": "/Users/ahmedabdulahiahmed/Documents/IN3110/IN3110-ahmeaah/assignment2/requirements.txt",
-    "Git commit": "3a9ed09776e1910d5a2b2ffe2f61c3cbd46ac29a"
+    "Git commit": "3a9ed09776e1910d5a2b2ffe2f61c3cbd46ac29a",
+    "Last updated": "Tue Nov 14 14:29:16 2023"
   },
   {
     "Name": "mender-gui",
     "Version": "1.0.0",
     "Type": "npm",
     "Path": "/Users/ahmedabdulahiahmed/Documents/IN3110/IN3110-ahmeaah/assignment3/package-lock.json",
-    "Git commit": "3a9ed09776e1910d5a2b2ffe2f61c3cbd46ac29a"
+    "Git commit": "3a9ed09776e1910d5a2b2ffe2f61c3cbd46ac29a",
+    "Last updated": "Tue Nov 14 14:29:16 2023"
   },
   {
     "Name": "mender-gui",
     "Version": "1.0.0",
     "Type": "npm",
     "Path": "/Users/ahmedabdulahiahmed/Documents/IN3110/IN3110-ahmeaah/assignment4/package.json",
-    "Git commit": "3a9ed09776e1910d5a2b2ffe2f61c3cbd46ac29a"
+    "Git commit": "3a9ed09776e1910d5a2b2ffe2f61c3cbd46ac29a",
+    "Last updated": "Tue Nov 14 14:29:16 2023"
   }
 ]

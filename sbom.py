@@ -4,6 +4,7 @@ import sys
 import csv
 import json
 import subprocess
+import time
 
 original_path = os.getcwd()
 
@@ -48,13 +49,16 @@ def update_with_req(path,sbomData):
     version = None
     commit = None
     commit = get_git_commit_hash(path.strip('/requirements.txt'))
+
+    current_date = time.ctime(time.time()) #Gets the current date
+  
     with open(path,'r') as f:
         for line in f:
             if line:
                 name,version = line.split("==") 
 
     if name: #If name exists then we add it to the sbom list. If not we give the user an error message
-        sbomData.append({'Name': name, 'Version': version, 'Type': 'pip', 'Path': path,'Git commit':commit})
+        sbomData.append({'Name': name, 'Version': version, 'Type': 'pip', 'Path': path,'Git commit':commit,'Last updated':current_date})
     else:
          print('Error: No dependency found')
 
@@ -67,20 +71,23 @@ def update_with_json(path,sbomData):
     
     name = None
     version = None
-    commit = get_git_commit_hash(path.split('/package')[0])
+    commit = get_git_commit_hash(path.split('/package')[0]) 
+
+    current_date = time.ctime(time.time()) #Gets the current date
+  
     with open(path, 'r') as f:
         data = json.load(f)
         name,version = data['name'],data['version']
     
     if name: #If name exists then we add it to the sbom list. If not we give the user an error message
-            sbomData.append({'Name': name, 'Version': version, 'Type': 'npm', 'Path': path,'Git commit':commit})
+            sbomData.append({'Name': name, 'Version': version, 'Type': 'npm', 'Path': path,'Git commit':commit,'Last updated':current_date})
     else: 
         print('Error: No dependency found')
 
 def save_as_csv(sbomData,path):
     
     with open('sbom.csv','w+',newline='') as file:
-        fieldnames = ['Name', 'Version','Type','Path','Git commit']
+        fieldnames = ['Name', 'Version','Type','Path','Git commit','Last updated']
         writer = csv.DictWriter(file, fieldnames=fieldnames) #We create a dictwriter object given the fieldnames we created and write the data from the sbom out to the file.
         writer.writeheader()
         for data in sbomData:
@@ -94,6 +101,7 @@ def save_as_json(sbomData,path):
     
     print('Saved SBOM in CSV format to '+os.getcwd()+'/sbom.json')
 
+#This function takes in the path to the repo and return the git commit message
 def get_git_commit_hash(repo_path):
 
     os.chdir(os.path.abspath(os.sep) )#Changes diretory to root so it can redirect to where the repo lies. 
