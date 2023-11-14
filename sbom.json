@@ -1,0 +1,20 @@
+[
+  {
+    "Name": "apache-libcloud",
+    "Version": "3.3.1",
+    "Type": "pip",
+    "Path": "/Users/ahmedabdulahiahmed/Documents/IN3110/IN3110-ahmeaah/assignment2/requirements.txt"
+  },
+  {
+    "Name": "mender-gui",
+    "Version": "1.0.0",
+    "Type": "npm",
+    "Path": "/Users/ahmedabdulahiahmed/Documents/IN3110/IN3110-ahmeaah/assignment3/package-lock.json"
+  },
+  {
+    "Name": "mender-gui",
+    "Version": "1.0.0",
+    "Type": "npm",
+    "Path": "/Users/ahmedabdulahiahmed/Documents/IN3110/IN3110-ahmeaah/assignment4/package.json"
+  }
+]

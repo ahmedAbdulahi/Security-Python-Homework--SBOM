@@ -1,0 +1,4 @@
+Name,Version,Type,Path
+apache-libcloud,3.3.1,pip,/Users/ahmedabdulahiahmed/Documents/IN3110/IN3110-ahmeaah/assignment2/requirements.txt
+mender-gui,1.0.0,npm,/Users/ahmedabdulahiahmed/Documents/IN3110/IN3110-ahmeaah/assignment3/package-lock.json
+mender-gui,1.0.0,npm,/Users/ahmedabdulahiahmed/Documents/IN3110/IN3110-ahmeaah/assignment4/package.json
