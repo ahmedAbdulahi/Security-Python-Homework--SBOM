@@ -59,8 +59,7 @@ def update_with_req(path,sbom_data):
 
     if name: #If name exists then we add it to the sbom list. If not we give the user an error message
         sbom_data.append({'Name': name, 'Version': version, 'Type': 'pip', 'Path': path,'Git commit':commit,'Last updated':current_date})
-    else:
-         print('Error: No dependency found')
+    else: print("Error: No dependencies found for this file",path)
 
 """
 This function takes in the path to the package.json file and the datastructure for sbom.
@@ -86,7 +85,7 @@ def update_with_json(path,sbom_data):
                 for dependency in data['devDependencies'].keys():
                     sbom_data.append({'Name': str(dependency), 'Version': data['devDependencies'][dependency], 'Type': 'npm', 'Path': path,'Git commit':commit,'Last updated':current_date})
 
-        else: #then we know its package-lock.json file
+        elif 'packages' in data.keys(): #then we know its package-lock.json file
             other_libraries = data['packages'] #package-lock.json files have dependencies in other places than dependencies and devDepencies.
             for dependency,details in other_libraries.items(): 
 
@@ -96,7 +95,7 @@ def update_with_json(path,sbom_data):
                          for indirect_dependency,version in indirect_dependencies.items(): 
                              sbom_data.append({'Name': indirect_dependency, 'Version': version, 'Type': 'npm', 'Path': path,'Git commit':commit,'Last updated':current_date})
 
-
+        else: print("Error: No dependencies found for this file",path)
     
 def save_as_csv(sbom_data,path):
     
