@@ -6,7 +6,7 @@ import json
 import subprocess
 import time
 
-original_path = os.getcwd() #variable to hold on the working directory we started with
+
 
 def create_sbom(path):
    
@@ -19,32 +19,32 @@ def create_sbom(path):
         sys.exit(1)
     
     
-    sbomData = []
+    sbom_data = []
     
     for dirpath,_,filenames in os.walk(path): #Looping through all the directories
       for filename in filenames: #Looping through all the files inside chosen directory
             if filename == file_txt:
                 
-                update_with_req(os.path.join(dirpath, filename),sbomData)
+                update_with_req(os.path.join(dirpath, filename),sbom_data)
             elif filename == file_json or filename == file_js:
                
-                update_with_json(os.path.join(dirpath, filename),sbomData)
-    os.chdir(original_path) #changes back to original working directory, so it saves the files in the correct directory
+                update_with_json(os.path.join(dirpath, filename),sbom_data)
+    os.chdir(path) #changes back to original working directory, so it saves the files in the correct directory
     
-    if len(sbomData)==0:
+    if len(sbom_data)==0:
         print('Error: No source code repositories found')
         sys.exit(1)
     else:
-        save_as_csv(sbomData,path)
-        save_as_json(sbomData,path)
+        save_as_csv(sbom_data,path)
+        save_as_json(sbom_data,path)
     
 
 """
 This function takes in the path to the requirements file and the datastructure for sbom.
-It updates the datastructure with the needed information(name,version,type,path) and
+It updates the datastructure with the needed information(name,version,type,path,date) and
 gives an error message if it doesnt have sufficient data
 """
-def update_with_req(path,sbomData):
+def update_with_req(path,sbom_data):
     name = None
     version = None
     commit = None
@@ -58,16 +58,16 @@ def update_with_req(path,sbomData):
                 name,version = line.split("==") 
 
     if name: #If name exists then we add it to the sbom list. If not we give the user an error message
-        sbomData.append({'Name': name, 'Version': version, 'Type': 'pip', 'Path': path,'Git commit':commit,'Last updated':current_date})
+        sbom_data.append({'Name': name, 'Version': version, 'Type': 'pip', 'Path': path,'Git commit':commit,'Last updated':current_date})
     else:
          print('Error: No dependency found')
 
 """
 This function takes in the path to the package.json file and the datastructure for sbom.
-It updates the datastructure with the needed information(name,version,type,path) and
+It updates the datastructure with the needed information(name,version,type,path,date) and
 gives an error message if it doesnt have sufficient data
 """
-def update_with_json(path,sbomData):
+def update_with_json(path,sbom_data):
    
     commit = get_git_commit_hash(path.split('/package')[0]) 
 
@@ -81,28 +81,41 @@ def update_with_json(path,sbomData):
             
             #loop through both the dependencies and devdependcies dictionaries to extract information and put it in the data structure
             for dependency in data['dependencies'].keys():
-                sbomData.append({'Name': str(dependency), 'Version': data['dependencies'][dependency], 'Type': 'npm', 'Path': path,'Git commit':commit,'Last updated':current_date})
-            for dependency in data['devDependencies'].keys():
-                 sbomData.append({'Name': str(dependency), 'Version': data['devDependencies'][dependency], 'Type': 'npm', 'Path': path,'Git commit':commit,'Last updated':current_date})
+                sbom_data.append({'Name': str(dependency), 'Version': data['dependencies'][dependency], 'Type': 'npm', 'Path': path,'Git commit':commit,'Last updated':current_date})
+            if 'devDependencies' in data.keys(): #checks for if it also has a devdependencies dictionary.
+                for dependency in data['devDependencies'].keys():
+                    sbom_data.append({'Name': str(dependency), 'Version': data['devDependencies'][dependency], 'Type': 'npm', 'Path': path,'Git commit':commit,'Last updated':current_date})
+
         else: #then we know its package-lock.json file
-            print(data['packages'].keys())
+            other_libraries = data['packages'] #package-lock.json files have dependencies in other places than dependencies and devDepencies.
+            for dependency,details in other_libraries.items(): 
+
+                if dependency.startswith('node_modules') and 'dependencies' in details.keys():
+                         indirect_dependencies = details['dependencies']
+
+                         for indirect_dependency,version in indirect_dependencies.items(): 
+                             sbom_data.append({'Name': indirect_dependency, 'Version': version, 'Type': 'npm', 'Path': path,'Git commit':commit,'Last updated':current_date})
+
+
     
-def save_as_csv(sbomData,path):
+def save_as_csv(sbom_data,path):
     
-    with open('sbom.csv','w+',newline='') as file:
+    file_path = os.path.join(path,'sbom.csv')
+    with open(file_path,'w+',newline='') as file:
         fieldnames = ['Name', 'Version','Type','Path','Git commit','Last updated']
         writer = csv.DictWriter(file, fieldnames=fieldnames) #We create a dictwriter object given the fieldnames we created and write the data from the sbom out to the file.
         writer.writeheader()
-        for data in sbomData:
+        for data in sbom_data:
             writer.writerow(data)
-    print('Saved SBOM in CSV format to '+os.getcwd()+'/sbom.csv')
-def save_as_json(sbomData,path):
-    
-    with open('sbom.json','w+') as file:
-        json.dump(sbomData,file,indent=2)
+    print('Saved SBOM in CSV format to ',file_path)
+def save_as_json(sbom_data,path):
+    file_path = os.path.join(path,'sbom.json')
+  
+    with open(file_path,'w+') as file:
+        json.dump(sbom_data,file,indent=2)
       
     
-    print('Saved SBOM in CSV format to '+os.getcwd()+'/sbom.json')
+    print('Saved SBOM in JSON format to ',file_path)
 
 #This function takes in the path to the repo and return the git commit message
 def get_git_commit_hash(repo_path):
@@ -116,7 +129,7 @@ def get_git_commit_hash(repo_path):
         
         return commit_hash
     except subprocess.CalledProcessError:
-        print(f"Error: Unable to retrieve Git commit hash for repository at '{repo_path}'.")
+        print(f"Error: Unable to retrieve Git commit for repository at '{repo_path}'.")
         sys.exit(1)
     
    
