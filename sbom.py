@@ -6,7 +6,7 @@ import json
 import subprocess
 import time
 
-original_path = os.getcwd()
+original_path = os.getcwd() #variable to hold on the working directory we started with
 
 def create_sbom(path):
    
@@ -29,7 +29,7 @@ def create_sbom(path):
             elif filename == file_json or filename == file_js:
                
                 update_with_json(os.path.join(dirpath, filename),sbomData)
-    os.chdir(original_path) #changes back to original working directory, so it saves the files in the correct spot
+    os.chdir(original_path) #changes back to original working directory, so it saves the files in the correct directory
     
     if len(sbomData)==0:
         print('Error: No source code repositories found')
@@ -68,22 +68,25 @@ It updates the datastructure with the needed information(name,version,type,path)
 gives an error message if it doesnt have sufficient data
 """
 def update_with_json(path,sbomData):
-    
-    name = None
-    version = None
+   
     commit = get_git_commit_hash(path.split('/package')[0]) 
 
     current_date = time.ctime(time.time()) #Gets the current date
+    
   
     with open(path, 'r') as f:
         data = json.load(f)
-        name,version = data['name'],data['version']
+        
+        if 'dependencies' in data.keys():  #check for if the dependencies dict is in the top layer
+            
+            #loop through both the dependencies and devdependcies dictionaries to extract information and put it in the data structure
+            for dependency in data['dependencies'].keys():
+                sbomData.append({'Name': str(dependency), 'Version': data['dependencies'][dependency], 'Type': 'npm', 'Path': path,'Git commit':commit,'Last updated':current_date})
+            for dependency in data['devDependencies'].keys():
+                 sbomData.append({'Name': str(dependency), 'Version': data['devDependencies'][dependency], 'Type': 'npm', 'Path': path,'Git commit':commit,'Last updated':current_date})
+        else: #then we know its package-lock.json file
+            print(data['packages'].keys())
     
-    if name: #If name exists then we add it to the sbom list. If not we give the user an error message
-            sbomData.append({'Name': name, 'Version': version, 'Type': 'npm', 'Path': path,'Git commit':commit,'Last updated':current_date})
-    else: 
-        print('Error: No dependency found')
-
 def save_as_csv(sbomData,path):
     
     with open('sbom.csv','w+',newline='') as file:
@@ -104,7 +107,7 @@ def save_as_json(sbomData,path):
 #This function takes in the path to the repo and return the git commit message
 def get_git_commit_hash(repo_path):
 
-    os.chdir(os.path.abspath(os.sep) )#Changes diretory to root so it can redirect to where the repo lies. 
+    os.chdir(os.path.abspath(os.sep) )#Changes diretory to root so it can redirect to where the repo lies. This command should go for every operating system.
     os.chdir(os.path.join(os.getcwd(),repo_path)) #changes diretory too where the repo is.
     try:
         # Run the git log command to get the latest commit hash
