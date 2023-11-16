@@ -2,6 +2,10 @@
 Command line tool for finding and documenting dependencies and their versions
 
 
+How to run this project:
+python3 sbom.py <Directory>
+Example: python3 sbom.py /Users/ahmedabdulahiahmed/Documents/IN3110
+
 
 Assumptions:
 
@@ -13,11 +17,10 @@ Assumptions:
 
 Known issues/Bugs:
 
-Something that could be an issue later on is if the structure of a package.json or package-lock.json is changed later on
-then the code has to be changed also. Currently its very reliant that the structure is the same as the examples given in the homework assignment
+Potential issue: Code may be impacted if the structure of 'package.json' or 'package-lock.json' changes in the future. The current implementation relies heavily on the structure matching the provided examples in the homework assignment
 
 Ideas:
 
-1. To add an automatic pipeline so that when the package.json or package-lock.json file is changed then the code automatically runs.
-2. Add a review column for each package
+1. Implement an automatic pipeline to trigger code execution when 'package.json' or 'package-lock.json' changes.
+2. dd a review column for each package, allowing for package replacement based on scores
 3. Develop a GUI.

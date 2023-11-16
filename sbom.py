@@ -21,20 +21,24 @@ def create_sbom(path):
     
     sbom_data = []
     
+    len_repo = 0 #how many repos the code found inside the directory
     for dirpath,_,filenames in os.walk(path): #Looping through all the directories
       for filename in filenames: #Looping through all the files inside chosen directory
             if filename == file_txt:
                 
                 update_with_req(os.path.join(dirpath, filename),sbom_data)
+                len_repo+=1
             elif filename == file_json or filename == file_js:
-               
+
                 update_with_json(os.path.join(dirpath, filename),sbom_data)
+                len_repo+=1
     os.chdir(path) #changes back to original working directory, so it saves the files in the correct directory
     
     if len(sbom_data)==0:
         print('Error: No source code repositories found')
         sys.exit(1)
     else:
+        print("Found",len_repo,"repositories in",path)
         save_as_csv(sbom_data,path)
         save_as_json(sbom_data,path)
     
@@ -107,6 +111,7 @@ def save_as_csv(sbom_data,path):
         for data in sbom_data:
             writer.writerow(data)
     print('Saved SBOM in CSV format to ',file_path)
+    
 def save_as_json(sbom_data,path):
     file_path = os.path.join(path,'sbom.json')
   
