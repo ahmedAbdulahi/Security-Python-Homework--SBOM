@@ -2,6 +2,7 @@ from sbom import create_sbom
 import os
 import sys
 
+"Not time to finish"
 def test_create_sbom():
          
     passed = 0

@@ -4,16 +4,17 @@ Command line tool for finding and documenting dependencies and their versions
 
 How to run this project:
 python3 sbom.py <Directory>
-Example: python3 sbom.py /Users/ahmedabdulahiahmed/Documents/IN3110
+
+Example: python3 sbom.py /Users/ahmedabdulahiahmed/Documents/IN3110 
 
 
 Assumptions:
 
-1. I assume that if its a requirements.txt then the type is pip and if its a package.json file then the type is npm.
+1. A 'requirements.txt' file implies 'pip' as the package manager, and a 'package.json' file implies 'npm'
 
 2. I assume that if the file does not have a name value then the it is not a valid dependency and therefore is not needed in the sbom.
 
-3. I am not too sure of what an indirect dependency is so i just assumed it was the everything that was inside the dependencies object inside the node_modules.
+3. I assume that an indirect dependency is anything within the 'dependencies' object inside the 'node_modules' directory.
 
 Known issues/Bugs:
 
