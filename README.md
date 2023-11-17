@@ -3,13 +3,14 @@ Command line tool for finding and documenting dependencies and their versions
 
 
 How to run this project:
-python3 sbom.py <Directory>
+python3 sbom.py Directory
 
 Example: python3 sbom.py /Users/ahmedabdulahiahmed/Documents/IN3110
 
 If one or multiple folders have space in the folder name then you run it like the following example:
 
-Python3 sbom.py <Directory>
+Python3 sbom.py "Directory"
+
 Example: python3 sbom.py "/Users/ahmedabdulahiahmed/Documents/IN3110"
 
 
