@@ -53,17 +53,22 @@ def update_with_req(path,sbom_data):
     version = None
     commit = None
     commit = get_git_commit_hash(path.strip('/requirements.txt'))
-
+    found = False #This variable will be set to true if we find a dependency
     current_date = time.ctime(time.time()) #Gets the current date
   
     with open(path,'r') as f:
         for line in f:
-            if line:
+            name = None
+            version = None
+            if line and '==' in line:
                 name,version = line.split("==") 
+            else:
+                name = line
 
-    if name: #If name exists then we add it to the sbom list. If not we give the user an error message
-        sbom_data.append({'Name': name, 'Version': version, 'Type': 'pip', 'Path': path,'Git commit':commit,'Last updated':current_date})
-    else: print("Error: No dependencies found for this file",path)
+            if name: #If name exists then we add it to the sbom list. If not we give the user an error message
+                 sbom_data.append({'Name': name, 'Version': version, 'Type': 'pip', 'Path': path,'Git commit':commit,'Last updated':current_date})
+                 found = True
+    if not found: print("Error: No dependencies found for this file",path)
 
 """
 This function takes in the path to the package.json file and the datastructure for sbom.
@@ -84,10 +89,10 @@ def update_with_json(path,sbom_data):
             
             #loop through both the dependencies and devdependcies dictionaries to extract information and put it in the data structure
             for dependency in data['dependencies'].keys():
-                sbom_data.append({'Name': str(dependency), 'Version': data['dependencies'][dependency], 'Type': 'npm', 'Path': path,'Git commit':commit,'Last updated':current_date})
+                sbom_data.append({'Name': dependency, 'Version': data['dependencies'][dependency], 'Type': 'npm', 'Path': path,'Git commit':commit,'Last updated':current_date})
             if 'devDependencies' in data.keys(): #checks for if it also has a devdependencies dictionary.
                 for dependency in data['devDependencies'].keys():
-                    sbom_data.append({'Name': str(dependency), 'Version': data['devDependencies'][dependency], 'Type': 'npm', 'Path': path,'Git commit':commit,'Last updated':current_date})
+                    sbom_data.append({'Name': dependency, 'Version': data['devDependencies'][dependency], 'Type': 'npm', 'Path': path,'Git commit':commit,'Last updated':current_date})
 
         elif 'packages' in data.keys(): #then we know its package-lock.json file
             other_libraries = data['packages'] #package-lock.json files have dependencies in other places than dependencies and devDepencies.
@@ -111,7 +116,7 @@ def save_as_csv(sbom_data,path):
         for data in sbom_data:
             writer.writerow(data)
     print('Saved SBOM in CSV format to ',file_path)
-    
+
 def save_as_json(sbom_data,path):
     file_path = os.path.join(path,'sbom.json')
   
